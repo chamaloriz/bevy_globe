@@ -2,7 +2,8 @@ use bevy::prelude::*;
 
 mod navigation;
 mod wireframes;
-use navigation::rotate_on_drag;
+
+use navigation::{NavigationPlugin, rotate_on_drag};
 use wireframes::CustomWireframePlugin;
 
 #[derive(Component)]
@@ -10,7 +11,7 @@ struct Globe;
 
 fn main() {
     let mut app = App::new();
-    app.add_plugins((DefaultPlugins, MeshPickingPlugin));
+    app.add_plugins((DefaultPlugins, MeshPickingPlugin, NavigationPlugin));
     #[cfg(not(target_arch = "wasm32"))]
     app.add_plugins(CustomWireframePlugin);
     app.add_systems(Startup, setup);
