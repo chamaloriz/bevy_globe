@@ -1,11 +1,18 @@
 use bevy::prelude::*;
 
+mod navigation;
+mod wireframes;
+use navigation::rotate_on_drag;
+use wireframes::CustomWireframePlugin;
+
 #[derive(Component)]
 struct Globe;
 
 fn main() {
     let mut app = App::new();
     app.add_plugins((DefaultPlugins, MeshPickingPlugin));
+    #[cfg(not(target_arch = "wasm32"))]
+    app.add_plugins(CustomWireframePlugin);
     app.add_systems(Startup, setup);
     app.run();
 }
@@ -38,10 +45,4 @@ fn setup(
         Camera3d::default(),
         Transform::from_xyz(0., 0., 2.0).looking_at(Vec3::new(0., 0., 0.), Vec3::Y),
     ));
-}
-
-fn rotate_on_drag(drag: On<Pointer<Drag>>, mut transforms: Query<&mut Transform>) {
-    let mut transform = transforms.get_mut(drag.entity).unwrap();
-    transform.rotate_y(drag.delta.x * 0.02);
-    transform.rotate_x(drag.delta.y * 0.02);
 }
