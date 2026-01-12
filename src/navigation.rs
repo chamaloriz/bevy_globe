@@ -1,5 +1,8 @@
 use bevy::input::mouse::MouseWheel;
-use bevy::{input::mouse::{MouseScrollUnit, AccumulatedMouseMotion}, prelude::*};
+use bevy::{
+    input::mouse::{AccumulatedMouseMotion, MouseScrollUnit},
+    prelude::*,
+};
 pub struct NavigationPlugin;
 
 impl Plugin for NavigationPlugin {
@@ -19,7 +22,7 @@ fn scroll_events(
         };
 
         let current_distance = camera.translation.length();
-        let new_distance = (current_distance - scroll_amount).clamp(0.90, 3.0);
+        let new_distance = (current_distance - scroll_amount).clamp(1.0, 4.0);
 
         if current_distance > 0.0 {
             camera.translation = camera.translation.normalize() * new_distance;

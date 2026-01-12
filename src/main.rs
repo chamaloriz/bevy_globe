@@ -35,7 +35,7 @@ fn setup(
     });
 
     let sky_material_handle = materials.add(StandardMaterial {
-        base_color: Color::srgb(0.3, 0.3, 0.3),
+        base_color: Color::srgb(0.9, 0.9, 0.9),
         base_color_texture: Some(sky_texture_handle.clone()),
         alpha_mode: AlphaMode::Opaque,
         unlit: true,
@@ -51,7 +51,7 @@ fn setup(
     ));
 
     commands.spawn((
-        Mesh3d(meshes.add(Sphere::new(15.0).mesh().uv(32, 18))),
+        Mesh3d(meshes.add(Sphere::new(10.0).mesh().uv(32, 18))),
         MeshMaterial3d(sky_material_handle),
         Transform::from_xyz(0.0, 0.0, 0.0),
         Globe,
