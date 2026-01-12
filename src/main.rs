@@ -44,7 +44,7 @@ fn setup(
     });
 
     commands.spawn((
-        Mesh3d(meshes.add(Sphere::new(0.5).mesh().uv(32, 18))),
+        Mesh3d(meshes.add(Sphere::new(0.5).mesh().uv(64, 36))),
         MeshMaterial3d(earth_material_handle),
         Transform::from_xyz(0.0, 0.0, 0.0),
         Globe,
