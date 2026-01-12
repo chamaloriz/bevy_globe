@@ -29,11 +29,15 @@ fn scroll_events(
 
 pub fn rotate_on_drag(drag: On<Pointer<Drag>>, mut camera: Single<&mut Transform, With<Camera3d>>) {
     let rotation_sensitivity = 0.005;
-    let camera_right = camera.right();
 
-    let rotation_y = Quat::from_axis_angle(Vec3::Y, -drag.delta.x * rotation_sensitivity);
-    let rotation_x =
-        Quat::from_axis_angle(camera_right.into(), -drag.delta.y * rotation_sensitivity);
+    let rotation_y = Quat::from_axis_angle(
+        camera.local_y().into(),
+        -drag.delta.x * rotation_sensitivity,
+    );
+    let rotation_x = Quat::from_axis_angle(
+        camera.local_x().into(),
+        -drag.delta.y * rotation_sensitivity,
+    );
 
     let combined_rotation = rotation_y * rotation_x;
     camera.rotate_around(Vec3::ZERO, combined_rotation);
