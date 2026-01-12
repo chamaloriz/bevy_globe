@@ -3,7 +3,7 @@ use bevy::prelude::*;
 mod navigation;
 mod wireframes;
 
-use navigation::{NavigationPlugin, rotate_on_drag};
+use navigation::NavigationPlugin;
 use wireframes::CustomWireframePlugin;
 
 #[derive(Component)]
@@ -43,14 +43,12 @@ fn setup(
         ..default()
     });
 
-    commands
-        .spawn((
-            Mesh3d(meshes.add(Sphere::new(0.5).mesh().uv(32, 18))),
-            MeshMaterial3d(earth_material_handle),
-            Transform::from_xyz(0.0, 0.0, 0.0),
-            Globe,
-        ))
-        .observe(rotate_on_drag);
+    commands.spawn((
+        Mesh3d(meshes.add(Sphere::new(0.5).mesh().uv(32, 18))),
+        MeshMaterial3d(earth_material_handle),
+        Transform::from_xyz(0.0, 0.0, 0.0),
+        Globe,
+    ));
 
     commands.spawn((
         Mesh3d(meshes.add(Sphere::new(15.0).mesh().uv(32, 18))),

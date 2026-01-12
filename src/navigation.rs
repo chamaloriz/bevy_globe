@@ -1,10 +1,10 @@
 use bevy::input::mouse::MouseWheel;
-use bevy::{input::mouse::MouseScrollUnit, prelude::*};
+use bevy::{input::mouse::{MouseScrollUnit, AccumulatedMouseMotion}, prelude::*};
 pub struct NavigationPlugin;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, scroll_events);
+        app.add_systems(Update, (scroll_events, rotate_on_drag));
     }
 }
 
@@ -27,16 +27,24 @@ fn scroll_events(
     }
 }
 
-pub fn rotate_on_drag(drag: On<Pointer<Drag>>, mut camera: Single<&mut Transform, With<Camera3d>>) {
+pub fn rotate_on_drag(
+    mut camera: Single<&mut Transform, With<Camera3d>>,
+    mouse_button: Res<ButtonInput<MouseButton>>,
+    mouse_motion: Res<AccumulatedMouseMotion>,
+) {
+    if !mouse_button.pressed(MouseButton::Left) {
+        return;
+    }
+
     let rotation_sensitivity = 0.005;
 
     let rotation_y = Quat::from_axis_angle(
         camera.local_y().into(),
-        -drag.delta.x * rotation_sensitivity,
+        -mouse_motion.delta.x * rotation_sensitivity,
     );
     let rotation_x = Quat::from_axis_angle(
         camera.local_x().into(),
-        -drag.delta.y * rotation_sensitivity,
+        -mouse_motion.delta.y * rotation_sensitivity,
     );
 
     let combined_rotation = rotation_y * rotation_x;
