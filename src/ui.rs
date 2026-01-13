@@ -16,6 +16,11 @@ fn ui_example_system(mut contexts: EguiContexts, mut global_state: ResMut<Global
     egui::Window::new("Settings").show(contexts.ctx_mut()?, |ui| {
         ui.label("world");
         ui.add(egui::Slider::new(&mut global_state.month, 1..=12).text("month"));
+        ui.add(
+            egui::Slider::new(&mut global_state.cycle_duration, 1..=1000)
+                .text("cycle duration")
+                .suffix("ms"),
+        );
         ui.checkbox(&mut global_state.cycle_month, "cycle months");
         ui.checkbox(&mut global_state.wireframe, "wireframe");
     });

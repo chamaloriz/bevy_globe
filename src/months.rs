@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use bevy::{prelude::*, time::common_conditions::on_timer};
+use bevy::prelude::*;
 
 use super::{Earth, GlobalState};
 
@@ -18,10 +18,14 @@ impl Plugin for MonthsPlugin {
             .add_systems(
                 Update,
                 (
-                    update_earth_texture.run_if(resource_changed::<GlobalState>),
-                    cycle_through_months
-                        .run_if(on_timer(Duration::from_millis(100)))
-                        .run_if(|state: Res<GlobalState>| state.cycle_month),
+                    change_earth_texture.run_if(resource_changed::<GlobalState>),
+                    cycle_through_months.run_if(
+                        |time: Res<Time>, state: Res<GlobalState>, mut timer: Local<Timer>| {
+                            timer.set_mode(TimerMode::Repeating);
+                            timer.set_duration(Duration::from_millis(state.cycle_duration));
+                            state.cycle_month && timer.tick(time.delta()).just_finished()
+                        },
+                    ),
                 ),
             );
     }
@@ -39,7 +43,7 @@ fn preload_earth_textures(
         .collect();
 }
 
-fn update_earth_texture(
+fn change_earth_texture(
     global_state: Res<GlobalState>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mesh_material: Single<&MeshMaterial3d<StandardMaterial>, With<Earth>>,
