@@ -77,11 +77,11 @@ pub fn rotate_on_drag(
     let rotation_sensitivity = 0.005;
 
     let rotation_y = Quat::from_axis_angle(
-        camera.local_y().normalize().into(),
+        camera.local_y().normalize(),
         -mouse_motion.delta.x * rotation_sensitivity,
     );
     let rotation_x = Quat::from_axis_angle(
-        camera.local_x().normalize().into(),
+        camera.local_x().normalize(),
         -mouse_motion.delta.y * rotation_sensitivity,
     );
 

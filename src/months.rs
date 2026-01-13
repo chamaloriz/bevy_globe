@@ -18,7 +18,7 @@ impl Plugin for MonthsPlugin {
             .add_systems(
                 Update,
                 (
-                    update_earth_texture,
+                    update_earth_texture.run_if(resource_changed::<GlobalState>),
                     cycle_through_months.run_if(on_timer(Duration::from_millis(100))),
                 ),
             );
@@ -43,10 +43,6 @@ fn update_earth_texture(
     mesh_material: Single<&MeshMaterial3d<StandardMaterial>, With<Earth>>,
     earth_textures: Res<EarthTextures>,
 ) {
-    if !global_state.is_changed() {
-        return;
-    }
-
     if let Some(material) = materials.get_mut(mesh_material.0.id()) {
         let texture_index = (global_state.month - 1) as usize;
         if let Some(texture_handle) = earth_textures.textures.get(texture_index) {
