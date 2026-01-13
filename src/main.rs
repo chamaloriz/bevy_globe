@@ -21,6 +21,7 @@ pub struct GlobalState {
     draw_wireframe: bool,
     draw_geographic_poles: bool,
     draw_magnetic_poles: bool,
+    draw_equator: bool,
 }
 
 impl Default for GlobalState {
@@ -32,6 +33,7 @@ impl Default for GlobalState {
             draw_wireframe: false,
             draw_geographic_poles: false,
             draw_magnetic_poles: false,
+            draw_equator: false,
         }
     }
 }
@@ -93,4 +95,15 @@ fn setup(
         Camera3d::default(),
         Transform::from_xyz(0., 0., 2.0).looking_at(Vec3::new(0., 0., 0.), Vec3::Y),
     ));
+}
+
+fn lat_lon_to_cartesian(lat: f32, lon: f32, radius: f32) -> Vec3 {
+    let lat_rad = lat.to_radians();
+    let lon_rad = lon.to_radians();
+
+    Vec3::new(
+        -radius * lat_rad.cos() * lon_rad.cos(),
+        -radius * lat_rad.cos() * lon_rad.sin(),
+        radius * lat_rad.sin(),
+    )
 }

@@ -1,10 +1,10 @@
 use bevy::pbr::wireframe::{WireframeConfig, WireframePlugin};
 use bevy::{
-    color::palettes::basic::{BLUE, RED, WHITE},
+    color::palettes::basic::{BLUE, RED, WHITE, YELLOW},
     prelude::*,
 };
 
-use super::GlobalState;
+use super::{GlobalState, lat_lon_to_cartesian};
 
 pub struct CustomWireframePlugin;
 
@@ -14,6 +14,7 @@ impl Plugin for CustomWireframePlugin {
         app.add_systems(
             Update,
             (
+                draw_equator.run_if(|state: Res<GlobalState>| state.draw_equator),
                 draw_earth_geographic_poles
                     .run_if(|state: Res<GlobalState>| state.draw_geographic_poles),
                 draw_earth_magnetic_poles
@@ -43,4 +44,18 @@ fn draw_earth_magnetic_poles(mut gizmos: Gizmos) {
 
     gizmos.arrow(Vec3::ZERO, mag_north, RED);
     gizmos.arrow(Vec3::ZERO, mag_south, BLUE);
+}
+
+fn draw_equator(mut gizmos: Gizmos) {
+    let segments = 64;
+    for i in 0..segments {
+        let lon1 = (i as f32 / segments as f32) * 360.0;
+        let lon2 = ((i + 1) as f32 / segments as f32) * 360.0;
+
+        gizmos.line(
+            lat_lon_to_cartesian(0.0, lon1, 0.5),
+            lat_lon_to_cartesian(0.0, lon2, 0.5),
+            YELLOW,
+        );
+    }
 }
