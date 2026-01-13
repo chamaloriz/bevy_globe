@@ -3,11 +3,41 @@ use bevy::{
     input::mouse::{AccumulatedMouseMotion, MouseScrollUnit},
     prelude::*,
 };
+
+#[derive(Component)]
+pub struct InteractiveViaCursor;
+
+#[derive(Component)]
+pub struct InteractivityReady;
+
+#[derive(Resource, Default)]
+pub struct CursorOverEntity(pub bool);
+
 pub struct NavigationPlugin;
 
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (scroll_events, rotate_on_drag));
+        app.init_resource::<CursorOverEntity>();
+        app.add_systems(Update, (setup_interactivity, scroll_events, rotate_on_drag));
+    }
+}
+
+fn setup_interactivity(
+    mut commands: Commands,
+    entities: Query<Entity, (With<InteractiveViaCursor>, Without<InteractivityReady>)>,
+) {
+    for entity in entities {
+        commands
+            .entity(entity)
+            .insert(InteractivityReady)
+            .observe(
+                |_: On<Pointer<Over>>, mut state: ResMut<CursorOverEntity>| {
+                    state.0 = true;
+                },
+            )
+            .observe(|_: On<Pointer<Out>>, mut state: ResMut<CursorOverEntity>| {
+                state.0 = false;
+            });
     }
 }
 
@@ -31,10 +61,15 @@ fn scroll_events(
 }
 
 pub fn rotate_on_drag(
+    cursor_over_entity: Res<CursorOverEntity>,
     mut camera: Single<&mut Transform, With<Camera3d>>,
     mouse_button: Res<ButtonInput<MouseButton>>,
     mouse_motion: Res<AccumulatedMouseMotion>,
 ) {
+    if !cursor_over_entity.0 {
+        return;
+    }
+
     if !mouse_button.pressed(MouseButton::Left) {
         return;
     }

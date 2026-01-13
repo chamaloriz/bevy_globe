@@ -1,17 +1,39 @@
 use bevy::prelude::*;
 
+mod months;
 mod navigation;
+mod ui;
 mod wireframes;
 
-use navigation::NavigationPlugin;
+use months::MonthsPlugin;
+use navigation::{InteractiveViaCursor, NavigationPlugin};
+use ui::UiPlugin;
 use wireframes::CustomWireframePlugin;
 
 #[derive(Component)]
-struct Globe;
+pub struct Earth;
+
+#[derive(Resource)]
+pub struct GlobalState {
+    month: i8,
+}
+
+impl Default for GlobalState {
+    fn default() -> Self {
+        Self { month: 1 }
+    }
+}
 
 fn main() {
     let mut app = App::new();
-    app.add_plugins((DefaultPlugins, MeshPickingPlugin, NavigationPlugin));
+    app.init_resource::<GlobalState>();
+    app.add_plugins((
+        DefaultPlugins,
+        MeshPickingPlugin,
+        NavigationPlugin,
+        UiPlugin,
+        MonthsPlugin,
+    ));
     #[cfg(not(target_arch = "wasm32"))]
     app.add_plugins(CustomWireframePlugin);
     app.add_systems(Startup, setup);
@@ -24,11 +46,9 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let earth_texture_handle = asset_server.load("globe.png");
     let sky_texture_handle = asset_server.load("sky.png");
 
     let earth_material_handle = materials.add(StandardMaterial {
-        base_color_texture: Some(earth_texture_handle.clone()),
         alpha_mode: AlphaMode::Opaque,
         unlit: true,
         ..default()
@@ -44,17 +64,17 @@ fn setup(
     });
 
     commands.spawn((
+        Earth,
         Mesh3d(meshes.add(Sphere::new(0.5).mesh().uv(64, 36))),
         MeshMaterial3d(earth_material_handle),
         Transform::from_xyz(0.0, 0.0, 0.0),
-        Globe,
+        InteractiveViaCursor,
     ));
 
     commands.spawn((
         Mesh3d(meshes.add(Sphere::new(10.0).mesh().uv(32, 18))),
         MeshMaterial3d(sky_material_handle),
         Transform::from_xyz(0.0, 0.0, 0.0),
-        Globe,
     ));
 
     commands.spawn((
