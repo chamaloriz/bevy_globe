@@ -16,6 +16,7 @@ pub struct Earth;
 #[derive(Resource)]
 pub struct GlobalState {
     month: i8,
+    cycle_month: bool,
     wireframe: bool,
 }
 
@@ -23,6 +24,7 @@ impl Default for GlobalState {
     fn default() -> Self {
         Self {
             month: 1,
+            cycle_month: true,
             wireframe: false,
         }
     }

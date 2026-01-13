@@ -19,7 +19,9 @@ impl Plugin for MonthsPlugin {
                 Update,
                 (
                     update_earth_texture.run_if(resource_changed::<GlobalState>),
-                    cycle_through_months.run_if(on_timer(Duration::from_millis(100))),
+                    cycle_through_months
+                        .run_if(on_timer(Duration::from_millis(100)))
+                        .run_if(|state: Res<GlobalState>| state.cycle_month),
                 ),
             );
     }
