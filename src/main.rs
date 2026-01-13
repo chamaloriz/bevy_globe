@@ -18,16 +18,20 @@ pub struct GlobalState {
     month: i8,
     cycle_month: bool,
     cycle_duration: u64,
-    wireframe: bool,
+    draw_wireframe: bool,
+    draw_geographic_poles: bool,
+    draw_magnetic_poles: bool,
 }
 
 impl Default for GlobalState {
     fn default() -> Self {
         Self {
             month: 1,
-            cycle_duration: 100,
+            cycle_duration: 1000,
             cycle_month: true,
-            wireframe: false,
+            draw_wireframe: false,
+            draw_geographic_poles: false,
+            draw_magnetic_poles: false,
         }
     }
 }

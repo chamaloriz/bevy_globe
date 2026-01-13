@@ -22,7 +22,9 @@ fn ui_example_system(mut contexts: EguiContexts, mut global_state: ResMut<Global
                 .suffix("ms"),
         );
         ui.checkbox(&mut global_state.cycle_month, "cycle months");
-        ui.checkbox(&mut global_state.wireframe, "wireframe");
+        ui.checkbox(&mut global_state.draw_wireframe, "wireframe");
+        ui.checkbox(&mut global_state.draw_geographic_poles, "geographic_poles");
+        ui.checkbox(&mut global_state.draw_magnetic_poles, "magnetic_poles");
     });
     Ok(())
 }
