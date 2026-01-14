@@ -18,7 +18,18 @@ pub struct NavigationPlugin;
 impl Plugin for NavigationPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CursorOverEntity>();
-        app.add_systems(Update, (setup_interactivity, scroll_events, rotate_on_drag));
+        app.add_systems(
+            Update,
+            (
+                setup_interactivity,
+                scroll_events,
+                rotate_on_drag
+                    .run_if(|cursor_over_entity: Res<CursorOverEntity>| cursor_over_entity.0)
+                    .run_if(|mouse_button: Res<ButtonInput<MouseButton>>| {
+                        mouse_button.pressed(MouseButton::Left)
+                    }),
+            ),
+        );
     }
 }
 
@@ -61,19 +72,9 @@ fn scroll_events(
 }
 
 pub fn rotate_on_drag(
-    cursor_over_entity: Res<CursorOverEntity>,
     mut camera: Single<&mut Transform, With<Camera3d>>,
-    mouse_button: Res<ButtonInput<MouseButton>>,
     mouse_motion: Res<AccumulatedMouseMotion>,
 ) {
-    if !cursor_over_entity.0 {
-        return;
-    }
-
-    if !mouse_button.pressed(MouseButton::Left) {
-        return;
-    }
-
     let rotation_sensitivity = 0.005;
 
     let rotation_y = Quat::from_axis_angle(

@@ -2,11 +2,13 @@ use bevy::prelude::*;
 
 mod months;
 mod navigation;
+mod places;
 mod ui;
 mod wireframes;
 
 use months::MonthsPlugin;
 use navigation::{InteractiveViaCursor, NavigationPlugin};
+use places::PlacesPlugin;
 use ui::UiPlugin;
 use wireframes::CustomWireframePlugin;
 
@@ -23,6 +25,7 @@ fn main() {
         MonthsPlugin,
         #[cfg(not(target_arch = "wasm32"))]
         CustomWireframePlugin,
+        PlacesPlugin,
     ));
     app.add_systems(Startup, setup);
     app.run();

@@ -7,23 +7,12 @@ use bevy_egui::{EguiContexts, EguiPrimaryContextPass, egui};
 
 use super::lat_lon_to_cartesian;
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct WireframeState {
     draw_wireframe: bool,
     draw_geographic_poles: bool,
     draw_magnetic_poles: bool,
     draw_equator: bool,
-}
-
-impl Default for WireframeState {
-    fn default() -> Self {
-        Self {
-            draw_wireframe: false,
-            draw_geographic_poles: false,
-            draw_magnetic_poles: false,
-            draw_equator: false,
-        }
-    }
 }
 
 pub struct CustomWireframePlugin;
