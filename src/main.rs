@@ -21,9 +21,9 @@ fn main() {
         MeshPickingPlugin,
         NavigationPlugin,
         MonthsPlugin,
+        #[cfg(not(target_arch = "wasm32"))]
+        CustomWireframePlugin,
     ));
-    #[cfg(not(target_arch = "wasm32"))]
-    app.add_plugins(CustomWireframePlugin);
     app.add_systems(Startup, setup);
     app.run();
 }

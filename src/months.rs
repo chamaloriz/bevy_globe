@@ -17,7 +17,7 @@ impl Default for MonthState {
         Self {
             month: 1,
             cycle_duration: 1000,
-            cycle_month: true
+            cycle_month: true,
         }
     }
 }
@@ -81,10 +81,7 @@ fn cycle_through_months(mut state: ResMut<MonthState>) {
     state.month = (state.month % 12) + 1;
 }
 
-fn ui_system(
-    mut contexts: EguiContexts, 
-    mut state: ResMut<MonthState>
-) -> Result {
+fn ui_system(mut contexts: EguiContexts, mut state: ResMut<MonthState>) -> Result {
     egui::Window::new("Months").show(contexts.ctx_mut()?, |ui| {
         ui.add(egui::Slider::new(&mut state.month, 1..=12).text("month"));
         ui.add(
