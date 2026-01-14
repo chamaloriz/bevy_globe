@@ -3,30 +3,52 @@ use bevy::{
     color::palettes::basic::{BLUE, RED, WHITE, YELLOW},
     prelude::*,
 };
+use bevy_egui::{EguiContexts, EguiPrimaryContextPass, egui};
 
-use super::{GlobalState, lat_lon_to_cartesian};
+use super::lat_lon_to_cartesian;
+
+#[derive(Resource)]
+pub struct WireframeState {
+    draw_wireframe: bool,
+    draw_geographic_poles: bool,
+    draw_magnetic_poles: bool,
+    draw_equator: bool,
+}
+
+impl Default for WireframeState {
+    fn default() -> Self {
+        Self {
+            draw_wireframe: false,
+            draw_geographic_poles: false,
+            draw_magnetic_poles: false,
+            draw_equator: false,
+        }
+    }
+}
 
 pub struct CustomWireframePlugin;
 
 impl Plugin for CustomWireframePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(WireframePlugin::default());
+        app.init_resource::<WireframeState>();
+        app.add_systems(EguiPrimaryContextPass, ui_system);
         app.add_systems(
             Update,
             (
-                draw_equator.run_if(|state: Res<GlobalState>| state.draw_equator),
+                draw_equator.run_if(|state: Res<WireframeState>| state.draw_equator),
                 draw_earth_geographic_poles
-                    .run_if(|state: Res<GlobalState>| state.draw_geographic_poles),
+                    .run_if(|state: Res<WireframeState>| state.draw_geographic_poles),
                 draw_earth_magnetic_poles
-                    .run_if(|state: Res<GlobalState>| state.draw_magnetic_poles),
-                toggle_wireframe.run_if(resource_changed::<GlobalState>),
+                    .run_if(|state: Res<WireframeState>| state.draw_magnetic_poles),
+                toggle_wireframe.run_if(resource_changed::<WireframeState>),
             ),
         );
     }
 }
 
-fn toggle_wireframe(mut wireframe_config: ResMut<WireframeConfig>, global_state: Res<GlobalState>) {
-    wireframe_config.global = global_state.draw_wireframe;
+fn toggle_wireframe(mut wireframe_config: ResMut<WireframeConfig>, state: Res<WireframeState>) {
+    wireframe_config.global = state.draw_wireframe;
 }
 
 fn draw_earth_geographic_poles(mut gizmos: Gizmos) {
@@ -58,4 +80,14 @@ fn draw_equator(mut gizmos: Gizmos) {
             YELLOW,
         );
     }
+}
+
+fn ui_system(mut contexts: EguiContexts, mut state: ResMut<WireframeState>) -> Result {
+    egui::Window::new("Wireframes").show(contexts.ctx_mut()?, |ui| {
+        ui.checkbox(&mut state.draw_wireframe, "wireframe");
+        ui.checkbox(&mut state.draw_equator, "equator");
+        ui.checkbox(&mut state.draw_geographic_poles, "geographic_poles");
+        ui.checkbox(&mut state.draw_magnetic_poles, "magnetic_poles");
+    });
+    Ok(())
 }

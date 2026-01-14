@@ -13,39 +13,13 @@ use wireframes::CustomWireframePlugin;
 #[derive(Component)]
 pub struct Earth;
 
-#[derive(Resource)]
-pub struct GlobalState {
-    month: i8,
-    cycle_month: bool,
-    cycle_duration: u64,
-    draw_wireframe: bool,
-    draw_geographic_poles: bool,
-    draw_magnetic_poles: bool,
-    draw_equator: bool,
-}
-
-impl Default for GlobalState {
-    fn default() -> Self {
-        Self {
-            month: 1,
-            cycle_duration: 1000,
-            cycle_month: true,
-            draw_wireframe: false,
-            draw_geographic_poles: false,
-            draw_magnetic_poles: false,
-            draw_equator: false,
-        }
-    }
-}
-
 fn main() {
     let mut app = App::new();
-    app.init_resource::<GlobalState>();
     app.add_plugins((
         DefaultPlugins,
+        UiPlugin,
         MeshPickingPlugin,
         NavigationPlugin,
-        UiPlugin,
         MonthsPlugin,
     ));
     #[cfg(not(target_arch = "wasm32"))]
